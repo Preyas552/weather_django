@@ -13,7 +13,7 @@ spec:
         app: weather
     spec:
       containers:
-        - name: weather_django-web
+        - name: weather-django-web
           image: <533267320522>.dkr.ecr.ca-central-1.amazonaws.com/weather_django:v4
           ports:
             - containerPort: 8000
