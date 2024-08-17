@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=the_weather.settings
+      - PYTHONPATH=/app
+      - SECRET_KEY=django-insecure-5-7t59!$_z*^vx3je4uc(35j598at7-qs8so*li6%h@11g2!af
+      - DEBUG=True
+      - ALLOWED_HOSTS = ["*"]
+      - OPENWEATHERMAP_API_KEY=c8d4211ba2c25463ae0e1757c5eb6793

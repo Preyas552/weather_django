@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: weather
+  template:
+    metadata:
+      labels:
+        app: weather
+    spec:
+      containers:
+        - name: weather_django-web
+          image: <533267320522>.dkr.ecr.ca-central-1.amazonaws.com/weather_django:v4
+          ports:
+            - containerPort: 8000

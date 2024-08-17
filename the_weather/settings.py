@@ -1,21 +1,20 @@
-# settings.py
-
+import os
 from pathlib import Path
+
+# Add this line to get the PORT from environment variables
+PORT = int(os.environ.get('PORT', 8080))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5-7t59!$_z*^vx3je4uc(35j598at7-qs8so*li6%h@11g2!af'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-5-7t59!$_z*^vx3je4uc(35j598at7-qs8so*li6%h@11g2!af')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
-
+# Modified ALLOWED_HOSTS to include the dynamic PORT
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', f'localhost 127.0.0.1 [::1] 0.0.0.0:{PORT} .run.app 45.55.129.148').split()
 # Application definition
 
 INSTALLED_APPS = [
@@ -30,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -101,10 +101,40 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENWEATHERMAP_API_KEY = 'c8d4211ba2c25463ae0e1757c5eb6793'
+# OpenWeatherMap API Key
+OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY', 'c8d4211ba2c25463ae0e1757c5eb6793')
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+# WhiteNoise configuration
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CSRF trusted origins (add your Cloud Run URL here when you have it)
+CSRF_TRUSTED_ORIGINS = ['https://*.run.app']
